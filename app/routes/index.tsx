@@ -1,17 +1,19 @@
 // routes/index.js
-import type { Participant } from '@prisma/client'
-import { useLoaderData } from '@remix-run/react'
-import  prisma from '~/db/db.server'
+import type { Participant } from '@prisma/client';
+import { useLoaderData } from '@remix-run/react';
+import prisma from '~/db/db.server';
 
 export const loader = async () => {
   const data = {
-    participants: await prisma.participant.findMany(),
-  }
-  return data
-}
+    participants: await prisma.participant.findMany({
+      take: 10,
+    }),
+  };
+  return data;
+};
 
 export default function Index() {
-  const { participants } = useLoaderData<{participants: Participant[]}>()
+  const { participants } = useLoaderData<{ participants: Participant[] }>();
 
   return (
     <>
@@ -21,10 +23,12 @@ export default function Index() {
       <ul>
         {participants.map((participant) => (
           <li key={participant.id}>
-            <h1>{participant.firstname} {participant.lastname}</h1>
+            <h1>
+              {participant.firstname} {participant.lastname}
+            </h1>
           </li>
         ))}
       </ul>
     </>
-  )
+  );
 }

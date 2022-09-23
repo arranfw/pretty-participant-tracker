@@ -8,7 +8,7 @@ import { MenuItem, Menu } from '~/components/Menu';
 import { ArrowLeft, ArrowRight } from '~/icons';
 import { PaginationLink } from '~/components/PaginationLink';
 import { useEffect } from 'react';
-import { getPaginationQuery } from '~/util/pagination';
+import { getPaginationQuery, parseSortString } from '~/util/pagination';
 import { SortLink } from '~/components/SortLink';
 
 interface LoaderResponse {
@@ -24,6 +24,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   let page = parseInt(url.searchParams.get('page') || '0') - 1;
   const pageSize = parseInt(url.searchParams.get('pageSize') || '10');
+  const sortObject = parseSortString(url.searchParams.get('sort') || '');
   const lastPage = Math.ceil(participantCount / pageSize);
 
   if (page * pageSize > participantCount) {
@@ -33,7 +34,9 @@ export const loader: LoaderFunction = async ({ request }) => {
   const participants = await prisma.participant.findMany({
     take: pageSize,
     skip: page * pageSize,
-    orderBy: { lastname: 'asc' },
+    orderBy: Object.entries(sortObject).map(([sortField, sortDirection]) => ({
+      [sortField]: sortDirection,
+    })),
   });
 
   return { count: participantCount, lastPage, participants };

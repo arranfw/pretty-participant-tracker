@@ -1,10 +1,10 @@
-import { getSortValue, sortStringToSortObject } from './pagination';
+import { getSortValue, parseSortString } from './pagination';
 
-describe('sortStringToSortObject', () => {
+describe('parseSortString', () => {
   it('converts a sort string into a sort object: single field', () => {
     const sortString = '+firstName';
 
-    const sortObject = sortStringToSortObject(sortString);
+    const sortObject = parseSortString(sortString);
 
     expect(sortObject).toEqual({
       firstName: 'asc',
@@ -14,7 +14,7 @@ describe('sortStringToSortObject', () => {
   it('converts a sort string into a sort object: multiple fields', () => {
     const sortString = '+firstName,-lastName,+createdAt';
 
-    const sortObject = sortStringToSortObject(sortString);
+    const sortObject = parseSortString(sortString);
 
     expect(sortObject).toEqual({
       firstName: 'asc',
@@ -26,7 +26,7 @@ describe('sortStringToSortObject', () => {
   it('throws an error when given an invalid string', () => {
     const invalidSortString = '~firstName';
 
-    return expect(() => sortStringToSortObject(invalidSortString)).toThrow('Invalid sort string');
+    return expect(() => parseSortString(invalidSortString)).toThrow('Invalid sort string');
   });
 });
 

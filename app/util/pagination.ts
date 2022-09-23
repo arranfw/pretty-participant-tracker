@@ -25,7 +25,7 @@ export const getSortValue = (sortObject: SortObject, sortKey: string): string | 
 
 export type SortObject = Record<string, string>;
 
-export const sortStringToSortObject = (sortString: string) => {
+export const parseSortString = (sortString: string) => {
   const sortItem = sortString.split(',');
   const sortObject: Record<string, string> = {};
 

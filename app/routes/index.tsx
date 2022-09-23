@@ -76,6 +76,10 @@ export default function Index() {
       </Link>
       <div className='rounded-lg'>
         <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400 mb-4 '>
+          <colgroup>
+            <col width='50%' />
+            <col width='50%' />
+          </colgroup>
           <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300'>
             <tr>
               <th scope='col' className='py-3 px-6'>

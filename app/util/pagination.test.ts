@@ -2,29 +2,29 @@ import { getSortValue, parseSortString } from './pagination';
 
 describe('parseSortString', () => {
   it('converts a sort string into a sort object: single field', () => {
-    const sortString = '+firstName';
+    const sortString = '+firstname';
 
     const sortObject = parseSortString(sortString);
 
     expect(sortObject).toEqual({
-      firstName: 'asc',
+      firstname: 'asc',
     });
   });
 
   it('converts a sort string into a sort object: multiple fields', () => {
-    const sortString = '+firstName,-lastName,+createdAt';
+    const sortString = '+firstname,-lastname,+createdAt';
 
     const sortObject = parseSortString(sortString);
 
     expect(sortObject).toEqual({
-      firstName: 'asc',
-      lastName: 'desc',
+      firstname: 'asc',
+      lastname: 'desc',
       createdAt: 'asc',
     });
   });
 
   it('throws an error when given an invalid string', () => {
-    const invalidSortString = '~firstName';
+    const invalidSortString = '~firstname';
 
     return expect(() => parseSortString(invalidSortString)).toThrow('Invalid sort string');
   });
@@ -34,27 +34,27 @@ describe('getSortValue', () => {
   it('returns asc when the key is not present in the sort object', () => {
     const sortObject = {};
 
-    const sortValue = getSortValue(sortObject, 'firstName');
+    const sortValue = getSortValue(sortObject, 'firstname');
 
     expect(sortValue).toBe('asc');
   });
 
   it("returns desc when the key's value is asc", () => {
     const sortObject = {
-      firstName: 'asc',
+      firstname: 'asc',
     };
 
-    const sortValue = getSortValue(sortObject, 'firstName');
+    const sortValue = getSortValue(sortObject, 'firstname');
 
     expect(sortValue).toBe('desc');
   });
 
   it("returns undefined when the key's value is desc", () => {
     const sortObject = {
-      firstName: 'desc',
+      firstname: 'desc',
     };
 
-    const sortValue = getSortValue(sortObject, 'firstName');
+    const sortValue = getSortValue(sortObject, 'firstname');
 
     expect(sortValue).toBe(null);
   });

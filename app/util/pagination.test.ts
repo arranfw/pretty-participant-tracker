@@ -1,4 +1,4 @@
-import { getSortValue, parseSortString } from './pagination';
+import { getNextSortValue, parseSortString } from './pagination';
 
 describe('parseSortString', () => {
   it('converts a sort string into a sort object: single field', () => {
@@ -30,11 +30,11 @@ describe('parseSortString', () => {
   });
 });
 
-describe('getSortValue', () => {
+describe('getNextSortValue', () => {
   it('returns asc when the key is not present in the sort object', () => {
     const sortObject = {};
 
-    const sortValue = getSortValue(sortObject, 'firstname');
+    const sortValue = getNextSortValue(sortObject, 'firstname');
 
     expect(sortValue).toBe('asc');
   });
@@ -44,7 +44,7 @@ describe('getSortValue', () => {
       firstname: 'asc',
     };
 
-    const sortValue = getSortValue(sortObject, 'firstname');
+    const sortValue = getNextSortValue(sortObject, 'firstname');
 
     expect(sortValue).toBe('desc');
   });
@@ -54,7 +54,7 @@ describe('getSortValue', () => {
       firstname: 'desc',
     };
 
-    const sortValue = getSortValue(sortObject, 'firstname');
+    const sortValue = getNextSortValue(sortObject, 'firstname');
 
     expect(sortValue).toBe(null);
   });

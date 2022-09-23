@@ -1,6 +1,7 @@
 interface PaginationQueryOptions {
   page: string;
   pageSize: string;
+  sort: string;
 }
 
 export const getPaginationQuery = ({ page, pageSize }: PaginationQueryOptions): string => {
@@ -12,7 +13,7 @@ export const getPaginationQuery = ({ page, pageSize }: PaginationQueryOptions): 
   return `?${paginationSearchParams.toString()}`;
 };
 
-export const getSortValue = (sortObject: SortObject, sortKey: string): string | null => {
+export const getNextSortValue = (sortObject: SortObject, sortKey: string): string | null => {
   switch (sortObject[sortKey]) {
     case 'asc':
       return 'desc';
@@ -25,9 +26,13 @@ export const getSortValue = (sortObject: SortObject, sortKey: string): string | 
 
 export type SortObject = Record<string, string>;
 
-export const parseSortString = (sortString: string) => {
+export const parseSortString = (sortString?: string): SortObject => {
+  if (!sortString) {
+    return {};
+  }
+
   const sortItem = sortString.split(',');
-  const sortObject: Record<string, string> = {};
+  const sortObject: SortObject = {};
 
   sortItem.forEach((sortItem) => {
     const sortDirection = sortItem.charAt(0);

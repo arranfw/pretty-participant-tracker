@@ -102,9 +102,14 @@ export default function Index() {
         </p>
         <div className='place-self-end flex justify-between items-center gap-2'>
           <Menu menuLabel={currentPageSize}>
-            <MenuItem to={`?page=${currentPage}&pageSize=${10}`}>10</MenuItem>
-            <MenuItem to={`?page=${currentPage}&pageSize=${20}`}>20</MenuItem>
-            <MenuItem to={`?page=${currentPage}&pageSize=${100}`}>100</MenuItem>
+            {['10', '20', '100'].map((size) => (
+              <MenuItem
+                key={size}
+                to={getPaginationQuery({ page: currentPage.toString(), pageSize: size })}
+              >
+                {size}
+              </MenuItem>
+            ))}
           </Menu>
           <PaginationLink page={previousPage.toString()} disabled={isFirstPage}>
             <ArrowLeft />

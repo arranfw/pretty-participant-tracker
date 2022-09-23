@@ -9,5 +9,5 @@ export const getPaginationQuery = ({ page, pageSize }: PaginationQueryOptions): 
     pageSize,
   });
 
-  return paginationSearchParams.toString();
+  return `?${paginationSearchParams.toString()}`;
 };

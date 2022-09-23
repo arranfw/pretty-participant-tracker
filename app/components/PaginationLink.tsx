@@ -23,7 +23,7 @@ export const PaginationLink: React.FC<PaginationLinkProps> = ({ disabled, page, 
 
   return (
     <Link
-      to={{ pathname: `?${getPaginationQuery({ page, pageSize: currentPageSize })}` }}
+      to={{ pathname: getPaginationQuery({ page, pageSize: currentPageSize }) }}
       aria-label='previous page'
       className='text-gray-200'
     >

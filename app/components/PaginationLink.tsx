@@ -12,6 +12,7 @@ export const PaginationLink: React.FC<PaginationLinkProps> = ({ disabled, page, 
   const [searchParams] = useSearchParams();
 
   const currentPageSize = searchParams.get('pageSize') || '10';
+  const currentSort = searchParams.get('sort') || '';
 
   if (disabled) {
     return (
@@ -23,7 +24,7 @@ export const PaginationLink: React.FC<PaginationLinkProps> = ({ disabled, page, 
 
   return (
     <Link
-      to={{ pathname: getPaginationQuery({ page, pageSize: currentPageSize }) }}
+      to={{ pathname: getPaginationQuery({ page, pageSize: currentPageSize, sort: currentSort }) }}
       aria-label='previous page'
       className='text-gray-200'
     >

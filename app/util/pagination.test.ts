@@ -1,4 +1,4 @@
-import { getNextSortValue, parseSortString } from './pagination';
+import { getNextSortValue, parseSortString, stringifySortObject } from './pagination';
 
 describe('parseSortString', () => {
   it('converts a sort string into a sort object: single field', () => {
@@ -57,5 +57,35 @@ describe('getNextSortValue', () => {
     const sortValue = getNextSortValue(sortObject, 'firstname');
 
     expect(sortValue).toBe(null);
+  });
+});
+
+describe('stringifySortObject', () => {
+  it('converts a sort object into the equivalent sort string: multiple fields', () => {
+    const sortObject = {
+      firstname: 'asc',
+      lastname: 'desc',
+      createdAt: 'asc',
+    };
+    const sortString = stringifySortObject(sortObject);
+
+    expect(sortString).toBe('+firstname,-lastname,+createdAt');
+  });
+
+  it('converts a sort object into the equivalent sort string: single field', () => {
+    const sortObject = {
+      firstname: 'asc',
+    };
+    const sortString = stringifySortObject(sortObject);
+
+    expect(sortString).toBe('+firstname');
+  });
+
+  it('throws an error with invalid sortObject values', () => {
+    const sortObject = {
+      firstname: 'cat',
+    };
+
+    expect(() => stringifySortObject(sortObject)).toThrow('Invalid sort object value');
   });
 });

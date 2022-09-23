@@ -52,3 +52,23 @@ export const parseSortString = (sortString?: string): SortObject => {
 
   return sortObject;
 };
+
+export const stringifySortObject = (sortObject: SortObject): string => {
+  let sortItems: string[] = [];
+
+  Object.entries(sortObject).forEach(([sortKey, sortValue]) => {
+    console.log(sortKey, sortValue);
+    switch (sortValue) {
+      case 'asc':
+        sortItems.push(`+${sortKey}`);
+        break;
+      case 'desc':
+        sortItems.push(`-${sortKey}`);
+        break;
+      default:
+        throw new Error('Invalid sort object value');
+    }
+  });
+
+  return sortItems.join(',');
+};

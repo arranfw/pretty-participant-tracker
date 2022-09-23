@@ -14,13 +14,13 @@ export function links() {
 
 export default function App() {
   return (
-    <html lang='en'>
+    <html lang='en' className='h-full overflow-y-auto'>
       <head>
         <Meta />
         <Links />
       </head>
-      <body className='bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400  flex justify-center'>
-        <main className='w-16 md:w-32 lg:w-7/12'>
+      <body className='bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400  flex justify-center overflow-y-auto h-full'>
+        <main className='w-16 md:w-32 lg:w-7/12 h-full'>
           <Outlet />
         </main>
         <ScrollRestoration />

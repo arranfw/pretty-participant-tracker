@@ -1,10 +1,14 @@
 // routes/index.js
 import type { Participant } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
-import { Link, useLoaderData, useSearchParams } from '@remix-run/react';
+import { useLoaderData, useNavigate, useSearchParams } from '@remix-run/react';
+
 import prisma from '~/db/db.server';
-import { ArrowLeft } from '~/icons/arrow-left';
-import { ArrowRight } from '~/icons/arrow-right';
+import { MenuItem, Menu } from '~/components/Menu';
+import { ArrowLeft, ArrowRight } from '~/icons';
+import { PaginationLink } from '~/components/PaginationLink';
+import { useEffect } from 'react';
+import { getPaginationQuery } from '~/util/pagination';
 
 interface LoaderResponse {
   count: number;
@@ -15,84 +19,101 @@ interface LoaderResponse {
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
 
-  const page = parseInt(url.searchParams.get('page') || '0') - 1;
+  const participantCount = await prisma.participant.count();
+
+  let page = parseInt(url.searchParams.get('page') || '0') - 1;
   const pageSize = parseInt(url.searchParams.get('pageSize') || '10');
+  const lastPage = Math.ceil(participantCount / pageSize);
 
-  const [count, participants] = await prisma.$transaction([
-    prisma.participant.count(),
-    prisma.participant.findMany({
-      take: 10,
-      skip: page * pageSize,
-    }),
-  ]);
-  const lastPage = Math.ceil(count / pageSize);
+  if (page * pageSize > participantCount) {
+    page = lastPage;
+  }
 
-  return { count, lastPage, participants };
+  const participants = await prisma.participant.findMany({
+    take: pageSize,
+    skip: page * pageSize,
+    orderBy: { lastname: 'asc' },
+  });
+
+  return { count: participantCount, lastPage, participants };
 };
 
 export default function Index() {
   const { count, lastPage, participants } = useLoaderData<LoaderResponse>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const currentPageSize = parseInt(searchParams.get('pageSize') || '10');
   const currentPage = parseInt(searchParams.get('page') || '1');
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === lastPage;
   const nextPage = currentPage + 1;
   const previousPage = currentPage - 1;
 
+  useEffect(() => {
+    // redirect user if they extend pagesize beyond what's available
+    if (currentPage > lastPage) {
+      navigate(
+        `/?${getPaginationQuery({
+          page: lastPage.toString(),
+          pageSize: currentPageSize.toString(),
+        })}`
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, currentPageSize, lastPage]);
+
   return (
-    <>
-      <div>
-        <h1 className='text-3xl font-bold underline mb-4'>Participants</h1>
-      </div>
-      <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400 mb-4'>
-        <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300'>
-          <tr>
-            <th scope='col' className='py-3 px-6'>
-              First Name
-            </th>
-            <th scope='col' className='py-3 px-6'>
-              Last Name
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {participants.map((participant) => (
-            <tr
-              key={participant.id}
-              className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'
-            >
-              <td className='py-4 px-6  text-gray-900 whitespace-nowrap dark:text-white'>
-                {participant.firstname}
-              </td>
-              <td className='py-4 px-6  text-gray-900 whitespace-nowrap dark:text-white'>
-                {participant.lastname}
-              </td>
+    <div className='mb-20'>
+      <h1 className='text-3xl font-bold underline mb-4'>Participants</h1>
+      <div className='rounded-lg'>
+        <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400 mb-4 '>
+          <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300'>
+            <tr>
+              <th scope='col' className='py-3 px-6'>
+                First Name
+              </th>
+              <th scope='col' className='py-3 px-6'>
+                Last Name
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {participants.map((participant) => (
+              <tr
+                key={participant.id}
+                className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'
+              >
+                <td className='py-4 px-6  text-gray-900 whitespace-nowrap dark:text-white'>
+                  {participant.firstname}
+                </td>
+                <td className='py-4 px-6  text-gray-900 whitespace-nowrap dark:text-white'>
+                  {participant.lastname}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div className='grid grid-cols-3 w-full'>
-        <div className='place-self-start'>
-          <p>{count} participants.</p>
-        </div>
-        <p className='place-self-center'>Page {currentPage + 1}</p>
-        <div className='place-self-end w-16 flex justify-between'>
-          <div>
-            {!isFirstPage ? (
-              <Link to={{ pathname: `?page=${previousPage}` }} aria-label='previous page'>
-                <ArrowLeft />
-              </Link>
-            ) : null}
-          </div>
-          <div>
-            {!isLastPage ? (
-              <Link to={{ pathname: `?page=${nextPage}` }} aria-label='next page'>
-                <ArrowRight />
-              </Link>
-            ) : null}
-          </div>
+        <p className='place-self-start'>{count} participants.</p>
+        <p className='place-self-center'>
+          Page {currentPage}/{lastPage}
+        </p>
+        <div className='place-self-end flex justify-between items-center gap-2'>
+          <Menu menuLabel={currentPageSize}>
+            <MenuItem to={`?page=${currentPage}&pageSize=${10}`}>10</MenuItem>
+            <MenuItem to={`?page=${currentPage}&pageSize=${20}`}>20</MenuItem>
+            <MenuItem to={`?page=${currentPage}&pageSize=${100}`}>100</MenuItem>
+          </Menu>
+          <PaginationLink page={previousPage.toString()} disabled={isFirstPage}>
+            <ArrowLeft />
+          </PaginationLink>
+          <PaginationLink page={nextPage.toString()} disabled={isLastPage}>
+            <ArrowRight />
+          </PaginationLink>
         </div>
       </div>
-    </>
+    </div>
   );
 }

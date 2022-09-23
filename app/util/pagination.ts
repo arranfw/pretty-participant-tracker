@@ -4,10 +4,11 @@ interface PaginationQueryOptions {
   sort: string;
 }
 
-export const getPaginationQuery = ({ page, pageSize }: PaginationQueryOptions): string => {
+export const getPaginationQuery = ({ page, pageSize, sort }: PaginationQueryOptions): string => {
   const paginationSearchParams = new URLSearchParams({
-    page,
-    pageSize,
+    ...(page ? { page } : {}),
+    ...(pageSize ? { pageSize } : {}),
+    ...(sort ? { sort } : {}),
   });
 
   return `?${paginationSearchParams.toString()}`;
@@ -57,7 +58,6 @@ export const stringifySortObject = (sortObject: SortObject): string => {
   let sortItems: string[] = [];
 
   Object.entries(sortObject).forEach(([sortKey, sortValue]) => {
-    console.log(sortKey, sortValue);
     switch (sortValue) {
       case 'asc':
         sortItems.push(`+${sortKey}`);

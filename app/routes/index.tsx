@@ -9,6 +9,7 @@ import { ArrowLeft, ArrowRight } from '~/icons';
 import { PaginationLink } from '~/components/PaginationLink';
 import { useEffect } from 'react';
 import { getPaginationQuery } from '~/util/pagination';
+import { SortLink } from '~/components/SortLink';
 
 interface LoaderResponse {
   count: number;
@@ -43,6 +44,7 @@ export default function Index() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const currentSort = searchParams.get('sort') || '';
   const currentPageSize = parseInt(searchParams.get('pageSize') || '10');
   const currentPage = parseInt(searchParams.get('page') || '1');
   const isFirstPage = currentPage === 1;
@@ -57,6 +59,7 @@ export default function Index() {
         `/?${getPaginationQuery({
           page: lastPage.toString(),
           pageSize: currentPageSize.toString(),
+          sort: currentSort,
         })}`
       );
     }
@@ -71,10 +74,10 @@ export default function Index() {
           <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300'>
             <tr>
               <th scope='col' className='py-3 px-6'>
-                First Name
+                <SortLink sortKey='firstname'>First Name</SortLink>
               </th>
               <th scope='col' className='py-3 px-6'>
-                Last Name
+                <SortLink sortKey='lastname'>Last Name</SortLink>
               </th>
             </tr>
           </thead>
@@ -105,7 +108,11 @@ export default function Index() {
             {['10', '20', '100'].map((size) => (
               <MenuItem
                 key={size}
-                to={getPaginationQuery({ page: currentPage.toString(), pageSize: size })}
+                to={getPaginationQuery({
+                  page: currentPage.toString(),
+                  pageSize: size,
+                  sort: currentSort,
+                })}
               >
                 {size}
               </MenuItem>

@@ -15,7 +15,7 @@ interface LoaderResponse {
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
 
-  const page = parseInt(url.searchParams.get('page') || '0');
+  const page = parseInt(url.searchParams.get('page') || '0') - 1;
   const pageSize = parseInt(url.searchParams.get('pageSize') || '10');
 
   const [count, participants] = await prisma.$transaction([
@@ -25,7 +25,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       skip: page * pageSize,
     }),
   ]);
-  const lastPage = Math.floor(count / pageSize);
+  const lastPage = Math.ceil(count / pageSize);
 
   return { count, lastPage, participants };
 };
@@ -33,8 +33,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Index() {
   const { count, lastPage, participants } = useLoaderData<LoaderResponse>();
   const [searchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get('page') || '0');
-  const isFirstPage = currentPage === 0;
+  const currentPage = parseInt(searchParams.get('page') || '1');
+  const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === lastPage;
   const nextPage = currentPage + 1;
   const previousPage = currentPage - 1;

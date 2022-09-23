@@ -38,35 +38,61 @@ export default function Index() {
   const isLastPage = currentPage === lastPage;
   const nextPage = currentPage + 1;
   const previousPage = currentPage - 1;
-  console.log({ isFirstPage, isLastPage });
+
   return (
     <>
       <div>
-        <h1 className='text-3xl font-bold underline'>Participants</h1>
+        <h1 className='text-3xl font-bold underline mb-4'>Participants</h1>
       </div>
-      <ul>
-        {participants.map((participant) => (
-          <li key={participant.id}>
-            <h1>
-              {participant.firstname} {participant.lastname}
-            </h1>
-          </li>
-        ))}
-      </ul>
-      <div className='flex'>
-        {!isFirstPage ? (
-          <Link to={{ pathname: `?page=${previousPage}` }}>
-            <ArrowLeft />
-          </Link>
-        ) : null}
-        {!isLastPage ? (
-          <Link to={{ pathname: `?page=${nextPage}` }}>
-            <ArrowRight />
-          </Link>
-        ) : null}
+      <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400 mb-4'>
+        <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300'>
+          <tr>
+            <th scope='col' className='py-3 px-6'>
+              First Name
+            </th>
+            <th scope='col' className='py-3 px-6'>
+              Last Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {participants.map((participant) => (
+            <tr
+              key={participant.id}
+              className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'
+            >
+              <td className='py-4 px-6  text-gray-900 whitespace-nowrap dark:text-white'>
+                {participant.firstname}
+              </td>
+              <td className='py-4 px-6  text-gray-900 whitespace-nowrap dark:text-white'>
+                {participant.lastname}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className='grid grid-cols-3 w-full'>
+        <div className='place-self-start'>
+          <p>{count} participants.</p>
+        </div>
+        <p className='place-self-center'>Page {currentPage + 1}</p>
+        <div className='place-self-end w-16 flex justify-between'>
+          <div>
+            {!isFirstPage ? (
+              <Link to={{ pathname: `?page=${previousPage}` }} aria-label='previous page'>
+                <ArrowLeft />
+              </Link>
+            ) : null}
+          </div>
+          <div>
+            {!isLastPage ? (
+              <Link to={{ pathname: `?page=${nextPage}` }} aria-label='next page'>
+                <ArrowRight />
+              </Link>
+            ) : null}
+          </div>
+        </div>
       </div>
-      <p>Page {currentPage + 1}</p>
-      <p>{count} participants.</p>
     </>
   );
 }

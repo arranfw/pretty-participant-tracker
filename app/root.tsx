@@ -19,8 +19,10 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
-        <Outlet />
+      <body className='bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400  flex justify-center'>
+        <main className='w-16 md:w-32 lg:w-7/12'>
+          <Outlet />
+        </main>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

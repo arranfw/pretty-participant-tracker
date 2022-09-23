@@ -1,4 +1,9 @@
-import { getNextSortValue, parseSortString, stringifySortObject } from './pagination';
+import {
+  getNextSortValue,
+  getPaginationQuery,
+  parseSortString,
+  stringifySortObject,
+} from './pagination';
 
 describe('parseSortString', () => {
   it('converts a sort string into a sort object: single field', () => {
@@ -89,3 +94,25 @@ describe('stringifySortObject', () => {
     expect(() => stringifySortObject(sortObject)).toThrow('Invalid sort object value');
   });
 });
+
+describe('getPaginationQuery', () => [
+  it('builds a query string out of pagination query options: multiple fields', () => {
+    const paginationQueryOptions = {
+      page: '1',
+      pageSize: '25',
+      sort: '+firstname',
+    };
+    const paginationQuery = getPaginationQuery(paginationQueryOptions);
+    expect(paginationQuery).toBe('?page=1&pageSize=25&sort=%2Bfirstname');
+  }),
+
+  it('does not include falsey values in the returned query string', () => {
+    const paginationQueryOptions = {
+      page: '1',
+      pageSize: '25',
+      sort: '',
+    };
+    const paginationQuery = getPaginationQuery(paginationQueryOptions);
+    expect(paginationQuery).toBe('?page=1&pageSize=25');
+  }),
+]);

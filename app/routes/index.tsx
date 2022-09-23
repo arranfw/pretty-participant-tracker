@@ -18,7 +18,7 @@ export default function Index() {
   return (
     <>
       <div>
-        <h1>Participants</h1>
+        <h1 className='text-3xl font-bold underline'>Participants</h1>
       </div>
       <ul>
         {participants.map((participant) => (

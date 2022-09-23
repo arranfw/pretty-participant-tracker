@@ -1,7 +1,7 @@
 // routes/index.js
 import type { Participant } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
-import { useLoaderData, useNavigate, useSearchParams } from '@remix-run/react';
+import { Link, useLoaderData, useNavigate, useSearchParams } from '@remix-run/react';
 
 import prisma from '~/db/db.server';
 import { MenuItem, Menu } from '~/components/Menu';
@@ -22,7 +22,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const participantCount = await prisma.participant.count();
 
-  let page = parseInt(url.searchParams.get('page') || '0') - 1;
+  let page = parseInt(url.searchParams.get('page') || '1') - 1;
   const pageSize = parseInt(url.searchParams.get('pageSize') || '10');
   const sortObject = parseSortString(url.searchParams.get('sort') || '');
   const lastPage = Math.ceil(participantCount / pageSize);
@@ -71,7 +71,9 @@ export default function Index() {
 
   return (
     <div className='mb-20'>
-      <h1 className='text-3xl font-bold underline mb-4'>Participants</h1>
+      <Link to='/'>
+        <h1 className='text-3xl font-bold underline mb-4'>Participants</h1>
+      </Link>
       <div className='rounded-lg'>
         <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400 mb-4 '>
           <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300'>

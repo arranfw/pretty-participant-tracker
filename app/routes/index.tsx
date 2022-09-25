@@ -1,5 +1,5 @@
 // routes/index.js
-import type { Participant } from '@prisma/client';
+import type { Participant, ParticipantStatus, ParticipantStatusMap, Site } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { Link, useLoaderData, useNavigate, useSearchParams } from '@remix-run/react';
 
@@ -14,7 +14,12 @@ import { SortLink } from '~/components/SortLink';
 interface LoaderResponse {
   count: number;
   lastPage: number;
-  participants: Participant[];
+  participants: (Participant & {
+    statuses: (ParticipantStatusMap & {
+      site: Site;
+      status: ParticipantStatus;
+    })[];
+  })[];
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -37,6 +42,14 @@ export const loader: LoaderFunction = async ({ request }) => {
     orderBy: Object.entries(sortObject).map(([sortField, sortDirection]) => ({
       [sortField]: sortDirection,
     })),
+    include: {
+      statuses: {
+        include: {
+          site: true,
+          status: true,
+        },
+      },
+    },
   });
 
   return { count: participantCount, lastPage, participants };
@@ -90,7 +103,7 @@ export default function Index() {
                 <SortLink sortKey='lastname'>Last Name</SortLink>
               </th>
               <th scope='col' className='py-3 px-6'>
-                <SortLink sortKey='id'>ID</SortLink>
+                <SortLink sortKey='id'>Status</SortLink>
               </th>
             </tr>
           </thead>
@@ -107,7 +120,7 @@ export default function Index() {
                   {participant.lastname}
                 </td>
                 <td className='py-4 px-6  text-gray-900 whitespace-nowrap dark:text-white'>
-                  {participant.id}
+                  {participant.statuses[0]?.status?.description}
                 </td>
               </tr>
             ))}

@@ -8,24 +8,34 @@ datasource db {
 }
 
 model Participant {
-  id        String                 @id @default(uuid())
+  id        String @id @default(uuid())
   firstname String
   lastname  String
-  createdAt DateTime               @default(now())
-  updatedAt DateTime               @updatedAt
-  statuses  ParticipantStatusMap[]
+
+  statuses ParticipantStatusMap[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Site {
-  id       String                 @id @default(uuid())
-  name     String
+  id   String @id @default(uuid())
+  name String
+
   statuses ParticipantStatusMap[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ParticipantStatus {
-  id                   String                 @id @default(uuid())
-  description          String
+  id          String @id @default(uuid())
+  description String
+
   participantStatusMap ParticipantStatusMap[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ParticipantStatusMap {
@@ -34,9 +44,13 @@ model ParticipantStatusMap {
   statusId      String
   date          DateTime
   effectiveDate DateTime
-  status        ParticipantStatus @relation(fields: [statusId], references: [id])
-  site          Site              @relation(fields: [siteId], references: [id])
-  participant   Participant       @relation(fields: [participantId], references: [id])
+
+  status      ParticipantStatus @relation(fields: [statusId], references: [id])
+  site        Site              @relation(fields: [siteId], references: [id])
+  participant Participant       @relation(fields: [participantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([participantId, siteId])
 }

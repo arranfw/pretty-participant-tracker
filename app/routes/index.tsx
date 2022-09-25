@@ -70,7 +70,7 @@ export default function Index() {
   }, [currentPage, currentPageSize, lastPage]);
 
   return (
-    <div className='mb-20'>
+    <div className='pb-20'>
       <Link to='/'>
         <h1 className='text-3xl font-bold underline mb-4'>Participants</h1>
       </Link>
